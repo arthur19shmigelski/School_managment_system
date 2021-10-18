@@ -1,0 +1,19 @@
+﻿@using (Html.BeginForm("Search", "Courses", FormMethod.Get))
+{
+    <div class="form-group">
+        <div class="input-group">
+            <input type="text" class="form-control" placeholder="Поиск курса" name="search" />
+            <div class="input-group-append">
+                <button class="btn btn-secondary" type="submit">
+                    Поиск
+                </button>
+            </div>
+
+            <div class="pl-5">
+                <button class="btn btn-info" type="submit">
+                    @Html.ActionLink("Расширенный", "Filter", "Courses")
+                </button>
+            </div>
+            </div>
+        </div>
+}

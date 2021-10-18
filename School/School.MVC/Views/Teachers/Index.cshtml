@@ -1,0 +1,68 @@
+﻿@model IEnumerable<Teacher>
+
+@{
+    ViewData["Title"] = "Teacher";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1 class="text text-center alert-info"> <i>Список наших учителей</i></h1>
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th> Полное имя </th>
+            <th> Возраст </th>
+            <th> Email</th>
+            <th> Телефон </th>
+            @if (ViewContext.HttpContext.User.IsInRole("admin"))
+            {
+                <th> Действие </th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FullName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Age)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Phone)
+                </td>
+                @if (ViewContext.HttpContext.User.IsInRole("admin"))
+                {
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-info">
+                            Изменить
+                        </a>
+                        <button type="submit" class="btn btn-outline-warning">
+                            @Html.ActionLink("Удалить", "Delete", new { id = item.Id })
+                        </button>
+                    </td>
+                }
+            </tr>
+        }
+    </tbody>
+    <tr>
+        <th>
+            <div class="text-info">Итого учителей: @Model.Count() </div>
+        </th>
+    </tr>
+</table>
+@if (ViewContext.HttpContext.User.IsInRole("admin"))
+{
+    <p>
+        <a asp-action="Edit" class="btn btn-success">Добавить нового учителя</a>
+    </p>
+
+}
+@await Html.PartialAsync("Partial/Pages", Model)
+

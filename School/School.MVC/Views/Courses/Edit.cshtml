@@ -1,0 +1,96 @@
+﻿@model CourseModel
+
+@{
+    ViewData["Title"] = "Course " + Model.Title;
+
+}
+<h1 class="text text-center alert-info">@(Model.Id == 0?"Создать новый курс" : "Изменить курс") <u> <i> @Model.Title</i> </u></h1>
+
+@using (Html.BeginForm("Edit", "Courses", FormMethod.Post))
+{
+    @Html.HiddenFor(x => x.Id)
+
+    <div class="form-group">
+        <label asp-for="Title">Название</label>
+        <input class="form-control" type="text" asp-for="Title" />
+        <span class="alert-danger" asp-validation-for="Title" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Description">Описание</label>
+        <textarea class="form-control" asp-for="Description"></textarea>
+    </div>
+    <div class="form-group">
+        <label asp-for="Program">Программа курса</label>
+        <textarea rows="5" class="form-control" asp-for="Program"></textarea>
+    </div>
+    <div class="form-group">
+        <label asp-for="TopicId">Тема обучения</label>
+        <select class="form-control" asp-for="TopicId" required>
+            <option value="">Выбрать...</option>
+            @if (ViewBag.Topics != null)
+            {
+                foreach (var topic in (List<TopicModel>)ViewBag.Topics)
+                {
+                    if (topic.Id == Model.TopicId)
+                    {
+                        <option value="@topic.Id" selected>@topic.Title</option>
+                    }
+                    else
+                    {
+                        <option value="@topic.Id">@topic.Title</option>
+                    }
+                }
+            }
+        </select>
+    </div>
+    @if (Model.Id == 0)
+    {
+        <div class="form-group">
+            <button type="submit" class="btn btn-success">Сохранить</button>
+            <a asp-action="Index" class="btn btn-secondary">Отменить</a>
+        </div>
+    }
+
+    else
+    {
+<div class="form-group">
+    <label asp-for="Requests">Запросы</label>
+    <table class="table table-bordered table-sm">
+        <tr>
+            <th>Студенты</th>
+            <th>Комментарии</th>
+        </tr>
+
+        @foreach (var request in Model.Requests)
+        {
+            <tr>
+                <td><a asp-controller="Students" asp-action="Edit" asp-route-id="@request.StudentId">@request.StudentName</a></td>
+                <td>@request.Comments</td>
+            </tr>
+        }
+
+        <tr>
+            <th>
+                <div class="text-info">Total: @Model.Requests.Count()</div>
+            </th>
+        </tr>
+    </table>
+</div>
+
+
+<div class="form-group">
+    <button type="submit" class="btn btn-success">Сохранить</button>
+    @* Если на группу есть запросы === то добавить новую группу *@
+    @if (Model.Requests.Any())
+    {
+        <a class="btn btn-success" asp-controller="StudentGroups" asp-action="Edit" asp-route-courseId="@Model.Id">Добавить новую группу</a>
+    }
+    <a asp-action="Index" class="btn btn-secondary">Отменить</a>
+</div>
+    }
+
+}
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial.cshtml")
+}

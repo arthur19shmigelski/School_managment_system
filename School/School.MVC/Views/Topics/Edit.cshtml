@@ -1,0 +1,36 @@
+﻿@model TopicModel
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1 class="text text-center alert-info">@(Model.Id == 0?"Создать новое направление курсов" : "Изменить направление ") <u> <i> @Model.Title</i> </u></h1>
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<hr />
+<div class="row">
+    <div class="col-md-12">
+        <form asp-action="Edit">
+            <div asp-validation-summary="All" class="text-danger accordion"></div>
+
+            <div class="form-group">
+                <label asp-for="Title" class="control-label">Название</label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description">Описание</label>
+                <textarea rows="5" class="form-control" asp-for="Description"></textarea>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-success">Сохранить</button>
+                <a asp-action="Index" class="btn btn-secondary">Отменить</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

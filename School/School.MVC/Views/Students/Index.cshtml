@@ -1,0 +1,64 @@
+﻿@model IEnumerable<Student>
+@using School.Core.Models.Enum
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+}
+
+<h1 class="text text-center alert-info"> <i>Список наших студентов</i></h1>
+@await Html.PartialAsync("Partial/_Search")
+
+<body>
+    <table class="table table-bordered table-striped table-sm">
+        <thead>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.Id)</th>
+                <th>Полное имя</th>
+                <th>Группа</th>
+                <th>Возраст</th>
+                <th>Email</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Id)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FullName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Group.Title)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Age)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Email)
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-info">
+                            Изменить
+                        </a>
+                        <button type="submit" class="btn btn-outline-warning">
+                            @Html.ActionLink("Удалить", "Delete", new { id = item.Id })
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+        <tr>
+            <th>
+                <div class="text-info">Итого студентов: @Model.Count()</div>
+            </th>
+        </tr>
+    </table>
+    <p>
+        <a asp-action="Edit" class="btn btn-success">Добавить нового студента</a>
+    </p>
+</body>
+@await Html.PartialAsync("Partial/Pages", Model)

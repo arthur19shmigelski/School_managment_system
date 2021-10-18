@@ -1,0 +1,88 @@
+﻿@model StudentGroupModel
+
+@{
+    ViewData["Title"] = "Group " + Model.Title;
+}
+<h1 class="text text-center alert-info">@(Model.Id == 0?"Создать новую группу" : "Изменить группу: ") <u> <i> @Model.Title</i> </u></h1>
+
+@using (Html.BeginForm("Edit", "StudentGroups", FormMethod.Post))
+{
+    @Html.HiddenFor(x => x.Id)
+
+    <div class="form-group">
+        <label asp-for="Title"></label>
+        <input class="form-control" type="text" asp-for="Title" required />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="CourseId">Course</label>
+        <select class="form-control" asp-for="CourseId">
+            <option value="">Select course...</option>
+            @foreach (var course in (List<CourseModel>)ViewBag.Courses)
+            {
+                if (course.Id == Model.CourseId)
+                {
+                    <option value="@course.Id" selected>@course.Title</option>
+                }
+                else
+                {
+                    <option value="@course.Id">@course.Title (@course.TopicName)</option>
+                }
+            }
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Status"></label>
+        <select class="form-control" asp-for="Status" asp-items="Html.GetEnumSelectList<School.Core.Models.Enum.GroupStatus>()">
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="TeacherId">Teacher</label>
+        <select class="form-control" asp-for="TeacherId">
+            <option value="">Select teacher...</option>
+            @foreach (var teacher in (List<TeacherModel>)ViewData["Teachers"])
+            {
+                if (teacher.Id == Model.TeacherId)
+                {
+                    <option value="@teacher.Id" selected>@teacher.LastName @teacher.FirstName</option>
+                }
+                else
+                {
+                    <option value="@teacher.Id">@teacher.LastName @teacher.FirstName</option>
+                }
+            }
+        </select>
+    </div>
+    @if (Model.Students != null)
+    {
+        <div class="form-group">
+            <label asp-for="Students"></label>
+            <table class="table table-borderless table-sm">
+
+                @foreach (var student in Model.Students)
+                {
+                    <tr>
+                        <td><a asp-controller="Students" asp-action="Edit" asp-route-id="@student.Id">@student.FullName</a></td>
+                    </tr>
+                }
+
+                <tr>
+                    <th>
+                        <div class="text-info">Total: @Model.Students.Count()</div>
+                    </th>
+                </tr>
+            </table>
+        </div>
+
+    }
+
+<div class="form-group">
+    @if (ViewBag.IsAdmin)
+    {
+        <button type="submit" class="btn btn-success">Сохранить</button>
+    }
+    <a asp-action="Index" class="btn btn-secondary">Отменить</a>
+</div>
+}

@@ -1,0 +1,60 @@
+﻿@model IEnumerable<Group>
+@{
+    ViewData["Title"] = "Student Groups";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h1 class="text text-center alert-info"> <i>Список наших групп</i></h1>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th class="w-10">Id</th>
+            <th>Тема</th>
+            <th>Статус</th>
+            <th>Преподаватель группы</th>
+            @if (ViewContext.HttpContext.User.IsInRole("admin"))
+            {
+                <th>Действие</th>
+            }
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var group in Model)
+        {
+            <tr>
+                <td>@group.Id</td>
+                <td>@group.Title</td>
+                <td>@group.Status</td>
+                <td>
+                    <a asp-controller="Teachers" asp-action="Edit" asp-route-id="@group.TeacherId">
+                        @group.Teacher?.LastName @group.Teacher?.FirstName?[0].
+                    </a>
+                </td>
+                @if (ViewContext.HttpContext.User.IsInRole("admin"))
+                {
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@group.Id" class="btn btn-outline-info">
+                            Изменить
+                        </a>
+                        <button type="submit" class="btn btn-outline-warning">
+                            @Html.ActionLink("Удалить", "Delete", new { id = group.Id })
+                        </button>
+                    </td>
+                }
+            </tr>
+        }
+    </tbody>
+    <tr>
+        <th>
+            <div class="text-info">Total: @Model.Count()</div>
+        </th>
+    </tr>
+</table>
+@if (ViewContext.HttpContext.User.IsInRole("admin"))
+{
+    <p>
+        <a asp-action="Edit" class="btn btn-success">Добавить новую группу</a>
+    </p>
+}
+@await Html.PartialAsync("Partial/Pages", Model)

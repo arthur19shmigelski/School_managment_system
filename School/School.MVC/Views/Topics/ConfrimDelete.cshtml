@@ -1,0 +1,55 @@
+﻿@model Topic
+<link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+
+<div class="jumbotron jumbotron-fluid">
+    <div class="container">
+        <p class="lead">Данная тема обучения <i> @Model.Title</i> содержит следующие курсы:</p>
+        @foreach (var item in Model.Courses)
+        {
+            <div id="accordion">
+                <div class="card">
+                    <div class="card-header" id="headingOne">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                @item.Title
+                            </button>
+                        </h5>
+                    </div>
+
+                    <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+                        <div class="card-body">
+                            @item.Description
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+    </div>
+</div>
+    
+<h1 class="text text-center alert-info"><u>В случае нажатия, всё удалится!</u></h1>
+<button type="button" class="btn btn-danger btn-lg btn-block" data-toggle="modal" data-target="#exampleModal">
+    Удалить
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Окно удаления</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-outline-warning">
+                    @Html.ActionLink("Да, удалить", "Delete", new { id = @Model.Id })
+                </button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Нет, я передумал</button>
+            </div>
+        </div>
+    </div>
+</div>

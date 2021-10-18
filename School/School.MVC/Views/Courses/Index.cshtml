@@ -1,0 +1,71 @@
+﻿@model IEnumerable<Course>
+@{
+    ViewData["Title"] = "Courses";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h1 class="text text-center alert-info"> <i>Список наших курсов</i></h1>
+
+@await Html.PartialAsync("Partial/_Search")
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Название</th>
+            <th>Описание курса</th>
+            <th>Уровень курса</th>
+            <th>Длительность (недели)</th>
+            <th>Цена (BYN)</th>
+
+            @if (ViewContext.HttpContext.User.IsInRole("admin"))
+            {
+                <th>Действие</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Any())
+        {
+            @foreach (var course in Model.OrderBy(c => c.Title))
+            {
+                <tr>
+                    <td><a asp-controller="Courses" asp-action="Edit" asp-route-id="@course.Id">@course.Title (@course.RequestsCount)</a></td>
+                    <td>@course.Description</td>
+                    <td>@course.Level</td>
+                    <td>@course.DurationWeeks</td>
+                    <td>@course.Price</td>
+
+                    @if (ViewContext.HttpContext.User.IsInRole("admin"))
+                    {
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@course.Id" class="btn btn-outline-info">
+                                Изменить
+                            </a>
+                            <button type="submit" class="btn btn-outline-warning">
+                                @Html.ActionLink("Удалить", "Delete", new { id = course.Id })
+                            </button>
+                        </td>
+                    }
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="10">Курсы отсутствуют!</td>
+            </tr>
+        }
+    </tbody>
+    <tr>
+        <th>
+            <div class="text-info">Итого курсов: @Model.Count()</div>
+        </th>
+    </tr>
+</table>
+@if (ViewContext.HttpContext.User.IsInRole("admin"))
+{
+    <p>
+        <a asp-action="Edit" class="btn btn-success">Добавить новый курс</a>
+    </p>
+}
+@await Html.PartialAsync("Partial/Pages", Model)
+

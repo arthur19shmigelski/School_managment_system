@@ -1,0 +1,68 @@
+﻿@model StudentModel
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+}
+
+<h1 class="text text-center alert-info"> @(Model.Id == 0?"Добавить нового студента" : "Изменить студента: ") <u> <i> @Model.FullName</i> </u></h1>
+<hr />
+@using (Html.BeginForm("Edit", "Students", FormMethod.Post))
+{
+    @Html.HiddenFor(x => x.Id)
+
+    <div class="form-group">
+        <label asp-for="FirstName">Имя</label>
+        <input class="form-control" type="text" asp-for="FirstName" />
+        <span class="alert-danger" asp-validation-for="FirstName" />
+    </div>
+    <div class="form-group">
+        <label asp-for="LastName">Фамилия</label>
+        <input class="form-control" type="text" asp-for="LastName" />
+        <span class="alert-danger" asp-validation-for="LastName" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Age">Полных лет</label>
+        <input class="form-control" type="number" asp-for="Age" />
+        @Html.ValidationMessageFor(m => m.Age, "", new { @class = "text-danger" })
+    </div>
+    <div class="form-group">
+        <label asp-for="Email">Email</label>
+        <input class="form-control" type="text" asp-for="Email" />
+        <span class="alert-danger" asp-validation-for="Email" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="GroupId">Группа</label>
+        <select class="form-control" asp-for="GroupId">
+            <option value="">Select group...</option>
+            @if (ViewBag.Groups != null)
+                foreach (var group in (List
+                <StudentGroupModel>)ViewBag.Groups)
+                {
+                    if (group.Id == Model.GroupId)
+                    {
+                        <option value="@group.Id" selected>@group.Title</option>
+                    }
+                    else
+                    {
+                        <option value="@group.Id">@group.Title</option>
+                    }
+                }
+        </select>
+    </div>
+    <div class="form-group">
+        <label asp-for="Phone" class="control-label">Телефон для связи</label>
+        <input asp-for="Phone" class="form-control" />
+        <span asp-validation-for="Phone" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-success">Сохранить</button>
+        <a asp-action="Index" class="btn btn-secondary">Отменить</a>
+    </div>
+}
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial.cshtml")
+}

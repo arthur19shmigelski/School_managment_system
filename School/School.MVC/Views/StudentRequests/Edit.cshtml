@@ -1,0 +1,85 @@
+﻿@model StudentRequestModel
+
+@{
+    //ViewData["Title"] = $"Student Request ({Model.StudentName}, {Model.CourseTitle})";
+    ViewData["Title"] = "Student Request " + Model.StudentName;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+}
+<h1 class="text text-center alert-info"> @(Model.Id == 0?"Создать новый запрос" : "Изменить запрос: ") <u> <i> </i> </u></h1>
+
+@using (Html.BeginForm("Edit", "StudentRequests", FormMethod.Post))
+{
+    @Html.HiddenFor(x => x.Id)
+
+    <div>
+        @Html.ValidationSummary()
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Created">Создан от</label>
+        <input class="form-control" type="date" asp-for="Created" readonly="readonly" />
+    </div>
+    @if (ViewContext.HttpContext.User.IsInRole("admin"))
+    {
+        <div class="form-group">
+            <div class="row align-items-end">
+                <div class="col-10">
+                    <label asp-for="StudentId">Список студентов</label>
+                    <select class="form-control" asp-for="StudentId" required>
+                        <option value="">Выбрать...</option>
+                        @if (ViewBag.Students != null)
+                            foreach (var student in (List
+                            <StudentModel>)ViewBag.Students)
+                            {
+                                if (student.Id == Model.StudentId)
+                                {
+                                    <option value="@student.Id" selected>@student.FullName</option>
+                                }
+                                else
+                                {
+                                    <option value="@student.Id">@student.FullName</option>
+                                }
+                            }
+                    </select>
+                </div>
+                <div class="col-2">
+                    <a class="btn btn-info" asp-controller="Students" asp-action="Edit">Добавить нового</a>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="form-group">
+        <label asp-for="CourseId">Курсы</label>
+        <select class="form-control" asp-for="CourseId" required>
+            <option value="">Выбрать...</option>
+            @if (ViewBag.Courses != null)
+                foreach (var course in (List
+                <CourseModel>)ViewBag.Courses)
+                {
+                    if (course.Id == Model.CourseId)
+                    {
+                        <option value="@course.Id" selected>@course.Title</option>
+                    }
+                    else
+                    {
+                        <option value="@course.Id">@course.Title</option>
+                    }
+                }
+        </select>
+    </div>
+    <div class="form-group">
+        <label asp-for="Comments">Комментарий</label>
+        <textarea class="form-control" asp-for="Comments"></textarea>
+    </div>
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-success">Сохранить</button>
+        <a asp-action="Index" class="btn btn-secondary">Отменить</a>
+    </div>
+}
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial.cshtml")
+}
